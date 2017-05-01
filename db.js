@@ -96,7 +96,7 @@ const User = db.define('user', {
 Package.hasMany(Version, { as: 'Versions' });
 Package.hasMany(Tag, { as: 'Tags' });
 
-Tag.hasOne(Version);
+Tag.belongsTo(Version);
 
 User.belongsToMany(Package, { through: 'UserPackage' });
 Package.belongsToMany(User, { through: 'UserPackage', as: 'Authors' });

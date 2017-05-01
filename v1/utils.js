@@ -42,6 +42,32 @@ module.exports = {
     return pkg.get();
   },
 
+  async getPackageAuthors(pkg) {
+    const response = this.getPackageInfo(pkg);
+    response.tags = {};
+    response.authors = [];
+    response.versions = {};
+
+    for (const author of await pkg.getAuthors()) {
+      response.authors.push(this.getUserInfo(author));
+    }
+
+    return response;
+  },
+
+  async getPackageTags(pkg) {
+    const response = this.getPackageInfo(pkg);
+    response.tags = {};
+    response.authors = [];
+    response.versions = {};
+
+    for (const tag of await pkg.getTags()) {
+      response.tags[tag.get('name')] = await tag.getVersion().get('version');
+    }
+
+    return response;
+  },
+
   async getAdvPackageInfo(req, pkg) {
     const response = this.getPackageInfo(pkg);
     response.tags = {};
