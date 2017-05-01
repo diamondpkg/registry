@@ -10,7 +10,7 @@ Make a file named `docker-compose.yml` with the following content.
 wget https://raw.githubusercontent.com/diamondpkg/registry/master/docker-compose.yml
 
 # Start
-`docker-compose up -d`
+docker-compose up -d
 
 # The server should be up within a few seconds at https://localhost:8000
 ```
