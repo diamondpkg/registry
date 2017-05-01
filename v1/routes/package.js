@@ -17,10 +17,13 @@ router.get('/package/:name', async (req, res) => {
 
 router.get('/package/:name/:version', async (req, res) => {
   const pkg = await Package.findById(req.params.name.toLowerCase());
-  if (!pkg) return res.send(restify.NotFoundError('Invalid package'));
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
 
-  const version = (await pkg.getVersions({ where: { version: req.params.version } }))[0];
-  if (!version) return res.send(restify.NotFoundError('Invalid version'));
+  let version = (await pkg.getVersions({ where: { version: req.params.version } }))[0];
+  const tag = (await pkg.getTags({ where: { name: req.params.version } }))[0];
+  if (!version && !tag) return res.send(new restify.NotFoundError('Invalid version/tag'));
+
+  if (tag) version = await tag.getVersion();
 
   res.writeHead(200, { 'Content-Length': Buffer.byteLength(version.dist), 'Content-Type': 'application/octet-stream' });
   res.write(version.dist);
@@ -77,7 +80,7 @@ router.post('/package/:name', auth, async (req, res) => {
 router.del('/package/:name', auth, async (req, res) => {
   const pkg = await Package.findById(req.params.name.toLowerCase());
 
-  if (!pkg) return res.send(restify.NotFoundError('Invalid package'));
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
   if (!await pkg.hasAuthor(req.user)) return res.send(new restify.ForbiddenError('Forbidden'));
 
   for (const version of await pkg.getVersions()) {
@@ -94,14 +97,14 @@ router.del('/package/:name', auth, async (req, res) => {
 });
 
 router.del('/package/:name/:version', auth, async (req, res) => {
-  if (!semver.valid(req.params.version)) return res.send(restify.BadRequestError('Invalid version'));
+  if (!semver.valid(req.params.version)) return res.send(new restify.BadRequestError('Invalid version'));
 
   const pkg = await Package.findById(req.params.name.toLowerCase());
 
-  if (!pkg) return res.send(restify.NotFoundError('Invalid package'));
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
   if (!await pkg.hasAuthor(req.user)) return res.send(new restify.ForbiddenError('Forbidden'));
 
-  if (!await pkg.hasVersion(`${req.params.name}@${req.params.version}`)) return res.send(restify.NotFoundError('Invalid version'));
+  if (!await pkg.hasVersion(`${req.params.name}@${req.params.version}`)) return res.send(new restify.NotFoundError('Invalid version'));
 
   for (const tag of await pkg.getTags()) {
     if (await tag.getVersion().get('version') === req.params.version) await tag.destroy();

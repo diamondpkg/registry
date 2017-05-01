@@ -18,7 +18,7 @@ router.get('/user/:name', async (req, res) => {
   return res.send(200, await utils.getAdvUserInfo(user));
 });
 
-router.post('/register', (req, res) => {
+router.post('/user', (req, res) => {
   if (!req.params.username || !req.params.password || !req.params.email) return res.send(new restify.BadRequestError('Missing username and/or password and/or email'));
 
   bcrypt.hash(req.params.password, 8, async (err, hash) => {
