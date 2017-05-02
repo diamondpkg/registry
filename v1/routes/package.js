@@ -164,27 +164,9 @@ router.post('/package/:name/tag/:tag', auth, async (req, res) => {
   if (!await pkg.hasAuthor(req.user)) return res.send(new restify.ForbiddenError('Forbidden'));
 
   let tag = (await pkg.getTags({ where: { name: req.params.tag.toLowerCase() } }))[0];
-  if (tag) return res.send(new restify.ConflictError('Tag already exists'));
-
-  const version = (await pkg.getVersions({ where: { version: req.params.version } }))[0];
-  if (!version) return res.send(new restify.BadRequestError('Invalid version'));
-
-  tag = await pkg.createTag({ name: req.params.tag.toLowerCase() });
-  await tag.setVersion(version);
-
-  return res.send(200, await utils.getPackageTags(pkg));
-});
-
-router.patch('/package/:name/tag/:tag', auth, async (req, res) => {
-  if (!semver.valid(req.params.version)) return res.send(new restify.BadRequestError('Invalid version'));
-
-  const pkg = await Package.findById(req.params.name.toLowerCase());
-
-  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
-  if (!await pkg.hasAuthor(req.user)) return res.send(new restify.ForbiddenError('Forbidden'));
-
-  const tag = (await pkg.getTags({ where: { name: req.params.tag.toLowerCase() } }))[0];
-  if (!tag) return res.send(new restify.NotFoundError('Invalid tag'));
+  if (!tag) {
+    tag = await pkg.createTag({ name: req.params.tag.toLowerCase() });
+  }
 
   const version = (await pkg.getVersions({ where: { version: req.params.version } }))[0];
   if (!version) return res.send(new restify.BadRequestError('Invalid version'));
