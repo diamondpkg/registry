@@ -27,10 +27,10 @@ router.get('/search/user', async (req, res) => {
     },
   });
 
-  const response = { size: users.length, users: [] };
+  const response = [];
 
   for (const user of users) {
-    response.users.push(await utils.getAdvUserInfo(user));
+    response.push(await utils.getAdvUserInfo(user));
   }
 
   return res.send(200, response);
@@ -47,10 +47,10 @@ router.get('/search/package', async (req, res) => {
     },
   });
 
-  const response = { size: packages.length, packages: [] };
+  const response = [];
 
   for (const pkg of packages) {
-    response.packages.push(await utils.getAdvPackageInfo(req, pkg));
+    response.push(await utils.getAdvPackageInfo(req, pkg));
   }
 
   return res.send(200, response);
