@@ -21,6 +21,6 @@ passport.use(new BasicStrategy((username, password, done) => {
   }).catch(err => done(err));
 }));
 
-const auth = passport.authenticate('basic', { session: false });
+const auth = passport.authenticate('basic', { session: false, failureRedirect: '/v1/unauthorized' });
 
 module.exports = auth;

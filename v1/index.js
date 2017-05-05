@@ -1,3 +1,4 @@
+const restify = require('restify');
 const { Package, User } = require('../db');
 const Router = require('restify-router').Router;
 const ver = require('../package.json').version;
@@ -11,6 +12,10 @@ router.get('/', async (req, res) => {
     packages: await Package.count(),
     users: await User.count(),
   });
+});
+
+router.get('/unauthorized', (req, res) => {
+  res.send(new restify.UnauthorizedError('Unauthorized'));
 });
 
 router.add('/', require('./routes/search'));
