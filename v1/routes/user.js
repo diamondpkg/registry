@@ -101,6 +101,7 @@ router.post('/user', (req, res) => {
     await superagent.post('https://api.elasticemail.com/v2/email/send')
       .field('apikey', process.env.EMAIL_APIKEY || config.email.apiKey)
       .field('from', process.env.EMAIL_FROM || config.email.from)
+      .field('fromName', 'diamond')
       .field('to', req.params.email.toLowerCase())
       .field('subject', 'Activate Your diamond Account')
       .field('bodyHtml', email({ url: `http://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
