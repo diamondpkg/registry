@@ -1,11 +1,10 @@
-const url = require('url');
-
 module.exports = {
   getUserInfo(user) {
     return {
       username: user.get('username'),
       email: user.get('email'),
       createdAt: user.get('createdAt'),
+      verified: user.get('verified'),
     };
   },
 
@@ -21,11 +20,6 @@ module.exports = {
   },
 
   getVersionInfo(req, pkg, version) {
-    const dist = url.parse(`https://${req.headers.host}`);
-    if (dist.port === '443') dist.protocol = 'https:';
-    else dist.protocol = 'http:';
-    dist.pathname = `/package/${pkg.get('name')}/${version.get('version')}`;
-
     return {
       version: version.get('version'),
       data: JSON.parse(version.get('data')),
@@ -33,7 +27,7 @@ module.exports = {
       createdAt: version.get('createdAt'),
       dist: {
         shasum: version.get('shasum'),
-        url: url.format(dist),
+        url: `http://${req.headers.host}/v1/package/${pkg.get('name')}/${version.get('version')}`,
       },
     };
   },

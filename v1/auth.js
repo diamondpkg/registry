@@ -10,6 +10,7 @@ passport.use(new BasicStrategy((username, password, done) => {
     },
   }).then((user) => {
     if (!user) return done(null, false);
+    if (!user.get('verified')) return done(null, false);
 
     bcrypt.compare(password, user.get('password'), (err, match) => {
       if (err) return done(err);

@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const Sequelize = require('sequelize');
 
 let db;
@@ -90,6 +91,18 @@ const User = db.define('user', {
   password: {
     type: Sequelize.STRING,
     allowNull: false,
+  },
+  verified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
+  verifyToken: {
+    type: Sequelize.STRING,
+    allowNull: true,
+    defaultValue() {
+      return crypto.randomBytes(32).toString('hex');
+    },
   },
 });
 

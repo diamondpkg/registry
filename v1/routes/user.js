@@ -1,11 +1,21 @@
+const fs = require('fs');
 const auth = require('../auth');
 const utils = require('../utils');
 const restify = require('restify');
 const bcrypt = require('bcryptjs');
 const { User } = require('../../db');
+const superagent = require('superagent');
+const Handlebars = require('handlebars');
 const Router = require('restify-router').Router;
 
+let config;
+try {
+  config = require('../../config.json'); // eslint-disable-line
+} catch (err) { } // eslint-disable-line
+
 const router = new Router();
+const email = Handlebars.compile(fs.readFileSync(`${__dirname}/../../html/email.handlebars`).toString());
+const error = Handlebars.compile(fs.readFileSync(`${__dirname}/../../html/error.handlebars`).toString());
 
 router.get('/user', auth, async (req, res) => {
   res.send(200, await utils.getAdvUserInfo(req.user));
@@ -16,6 +26,53 @@ router.get('/user/:name', async (req, res) => {
   if (!user) return res.send(new restify.NotFoundError('Invalid user'));
 
   return res.send(200, await utils.getAdvUserInfo(user));
+});
+
+router.get('/verify', async (req, res) => {
+  if (!req.params.user || !req.params.token) {
+    const body = error({ error: 'Missing URL Parameters' });
+    res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/html',
+    });
+    res.write(body);
+    return res.end();
+  }
+
+  const user = await User.findById(req.params.user);
+
+  if (!user) {
+    const body = error({ error: 'Invalid User' });
+    res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/html',
+    });
+    res.write(body);
+    return res.end();
+  }
+
+  if (user.get('verifyToken') !== req.params.token) {
+    const body = error({ error: 'Invalid Verify Token' });
+    res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/html',
+    });
+    res.write(body);
+    return res.end();
+  }
+
+  await user.update({
+    verified: true,
+    verifyToken: null,
+  });
+
+  const body = fs.readFileSync(`${__dirname}/../../html/success.html`);
+  res.writeHead(200, {
+    'Content-Length': Buffer.byteLength(body),
+    'Content-Type': 'text/html',
+  });
+  res.write(body);
+  return res.end();
 });
 
 router.post('/user', (req, res) => {
@@ -40,6 +97,13 @@ router.post('/user', (req, res) => {
       password: hash,
       email: req.params.email.toLowerCase(),
     });
+
+    await superagent.post('https://api.elasticemail.com/v2/email/send')
+      .field('apikey', process.env.EMAIL_APIKEY || config.email.apiKey)
+      .field('from', process.env.EMAIL_FROM || config.email.from)
+      .field('to', req.params.email.toLowerCase())
+      .field('subject', 'Activate Your diamond Account')
+      .field('bodyHtml', email({ url: `http://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
 
     return res.send(200, utils.getUserInfo(user));
   });
