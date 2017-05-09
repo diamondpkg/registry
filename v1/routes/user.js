@@ -104,7 +104,7 @@ router.post('/user', (req, res) => {
       .field('fromName', 'diamond')
       .field('to', req.params.email.toLowerCase())
       .field('subject', 'Activate Your diamond Account')
-      .field('bodyHtml', email({ url: `http://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
+      .field('bodyHtml', email({ url: `${req.isSecure() ? 'https' : 'http'}://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
 
     return res.send(200, utils.getUserInfo(user));
   });
