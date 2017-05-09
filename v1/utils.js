@@ -27,7 +27,7 @@ module.exports = {
       createdAt: version.get('createdAt'),
       dist: {
         shasum: version.get('shasum'),
-        url: `http://${req.headers.host}/v1/package/${pkg.get('name')}/${version.get('version')}`,
+        url: `${req.isSecure() ? 'https' : 'http'}://${req.headers.host}/v1/package/${pkg.get('name')}/${version.get('version')}`,
       },
     };
   },
