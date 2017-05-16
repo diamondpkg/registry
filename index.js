@@ -15,6 +15,7 @@ const server = restify.createServer({
 
 server.use(restify.bodyParser({ mapFiles: true }));
 server.use(restify.queryParser());
+server.use(restify.CORS());
 
 router.add('/', v1);
 router.add('/v1', v1);
