@@ -11,12 +11,12 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="384"
-   height="56"
-   viewBox="0 0 101.6 14.816667"
+   width="350"
+   height="55.999996"
+   viewBox="0 0 92.604167 14.816666"
    version="1.1"
    id="svg8"
-   sodipodi:docname="drawingtok.svg"
+   sodipodi:docname="full.svg"
    inkscape:version="0.92.0 r15299">
   <defs
      id="defs2">
@@ -73,9 +73,9 @@
        xlink:href="#blue"
        id="linearGradient4497"
        x1="-0.13229166"
-       y1="289.59162"
+       y1="289.59161"
        x2="101.73229"
-       y2="289.59162"
+       y2="289.59161"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.90658289,0,0,0.96656811,0.24767519,9.6816414)" />
     <inkscape:path-effect
@@ -126,9 +126,9 @@
        xlink:href="#linearGradient4837"
        id="linearGradient4839"
        x1="17.197918"
-       y1="286.59321"
-       x2="63.537898"
-       y2="286.59321"
+       y1="286.5932"
+       x2="63.537899"
+       y2="286.5932"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -140,21 +140,25 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.5582807"
      inkscape:cx="117.90115"
-     inkscape:cy="105.04827"
+     inkscape:cy="53.709652"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:showpageshadow="true"
      inkscape:pagecheckerboard="true"
-     showborder="false"
+     showborder="true"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1360"
      inkscape:window-height="705"
      inkscape:window-x="1432"
      inkscape:window-y="113"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
