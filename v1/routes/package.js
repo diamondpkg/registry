@@ -5,6 +5,7 @@ const utils = require('../utils');
 const semver = require('semver');
 const moment = require('moment');
 const restify = require('restify');
+const truncate = require('truncate');
 const Router = require('restify-router').Router;
 const { User, Package, Version, Tag } = require('../../db');
 
@@ -206,7 +207,7 @@ router.get('/package/:name/badge/full', async (req, res) => {
     if (err) return res.send(new restify.InternalServerError('Internal server error'));
     const data = file
       .replace('{{NAME}}', pkg.get('name'))
-      .replace('{{DESC}}', pkg.get('description'))
+      .replace('{{DESC}}', truncate(pkg.get('description'), 43))
       .replace('{{VER}}', version)
       .replace('{{TIME}}', time);
 
