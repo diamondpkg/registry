@@ -195,7 +195,7 @@ router.del('/package/:name/tag/:tag', auth, async (req, res) => {
   return res.send(200, await utils.getPackageTags(pkg));
 });
 
-router.get('/package/:name/badge/full', async (req, res) => {
+router.get('/package/:name/badge/full.svg', async (req, res) => {
   const pkg = await Package.findById(req.params.name.toLowerCase());
 
   if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
