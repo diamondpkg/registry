@@ -18,7 +18,7 @@ server.use(restify.bodyParser({ mapFiles: true }));
 server.use(restify.queryParser());
 
 const cors = corsMiddleware({
-  origins: ['https://diamond.js.org', 'https://diamondpkg.github.io', 'http://localhost:8080'],
+  origins: ['https://diamond.js.org', 'http://vue.diamond.hackzzila.com', 'http://localhost:8080'],
   credentials: true,
   allowHeaders: ['Authorization'],
 });
