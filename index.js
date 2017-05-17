@@ -4,6 +4,7 @@ const { db } = require('./db');
 const restify = require('restify');
 const ver = require('./package.json').version;
 const Router = require('restify-router').Router;
+const corsMiddleware = require('restify-cors-middleware');
 
 const router = new Router();
 const server = restify.createServer({
@@ -15,7 +16,15 @@ const server = restify.createServer({
 
 server.use(restify.bodyParser({ mapFiles: true }));
 server.use(restify.queryParser());
-server.use(restify.CORS());
+
+const cors = corsMiddleware({
+  origins: ['https://diamond.js.org', 'https://diamondpkg.github.io', 'http://localhost:8080'],
+  credentials: true,
+  allowHeaders: ['Access-Control-Allow-Origin', 'Authorization'],
+});
+
+server.pre(cors.preflight);
+server.pre(cors.actual);
 
 router.add('/', v1);
 router.add('/v1', v1);
