@@ -207,7 +207,7 @@ router.get('/package/:name/badge/full', async (req, res) => {
     if (err) return res.send(new restify.InternalServerError('Internal server error'));
     const data = file
       .replace('{{NAME}}', pkg.get('name'))
-      .replace('{{DESC}}', truncate(pkg.get('description'), 43))
+      .replace('{{DESC}}', truncate(pkg.get('description'), 40))
       .replace('{{VER}}', version)
       .replace('{{TIME}}', time);
 
