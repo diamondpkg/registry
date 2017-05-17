@@ -20,7 +20,7 @@ server.use(restify.queryParser());
 const cors = corsMiddleware({
   origins: ['https://diamond.js.org', 'https://diamondpkg.github.io', 'http://localhost:8080'],
   credentials: true,
-  allowHeaders: ['Access-Control-Allow-Origin', 'Authorization'],
+  allowHeaders: ['Authorization'],
 });
 
 server.pre(cors.preflight);
