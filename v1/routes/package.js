@@ -1,7 +1,9 @@
+const fs = require('fs');
 const auth = require('../auth');
 const crypto = require('crypto');
 const utils = require('../utils');
 const semver = require('semver');
+const moment = require('moment');
 const restify = require('restify');
 const Router = require('restify-router').Router;
 const { User, Package, Version, Tag } = require('../../db');
@@ -190,6 +192,34 @@ router.del('/package/:name/tag/:tag', auth, async (req, res) => {
   await tag.destroy();
 
   return res.send(200, await utils.getPackageTags(pkg));
+});
+
+router.get('/package/:name/badge/full', async (req, res) => {
+  const pkg = await Package.findById(req.params.name.toLowerCase());
+
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
+
+  const version = (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion()).get('version');
+  const time = moment(pkg.get('updatedAt')).fromNow();
+
+  fs.readFile('v1/badges/full.svg', 'utf8', (err, file) => {
+    if (err) return res.send(new restify.InternalServerError('Internal server error'));
+    const data = file
+      .replace('{{NAME}}', pkg.get('name'))
+      .replace('{{DESC}}', pkg.get('description'))
+      .replace('{{VER}}', version)
+      .replace('{{TIME}}', time);
+
+    res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(data),
+      'Content-Type': 'image/svg+xml',
+    });
+
+    res.write(data);
+    return res.end();
+  });
+
+  return undefined;
 });
 
 module.exports = router;
