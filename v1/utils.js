@@ -62,11 +62,20 @@ module.exports = {
     return response;
   },
 
+  async getMonthlyDownloads(pkg) {
+    const arr = new Array(12).fill(0);
+    for (const download of await pkg.getDownloads()) {
+      arr[download.get('month')] = download.get('count');
+    }
+    return arr;
+  },
+
   async getAdvPackageInfo(req, pkg) {
     const response = this.getPackageInfo(pkg);
     response.tags = {};
     response.authors = [];
     response.versions = {};
+    response.monthlyDownloads = await this.getMonthlyDownloads(pkg);
 
     for (const tag of await pkg.getTags()) {
       response.tags[tag.get('name')] = await tag.getVersion().get('version');

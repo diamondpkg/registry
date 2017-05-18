@@ -1,9 +1,10 @@
 const fs = require('fs');
 const auth = require('../auth');
 const crypto = require('crypto');
-const utils = require('../utils');
+// const Canvas = require('canvas');
 const semver = require('semver');
 const moment = require('moment');
+const utils = require('../utils');
 const restify = require('restify');
 const truncate = require('truncate');
 const Router = require('restify-router').Router;
@@ -27,6 +28,20 @@ router.get('/package/:name/:version', async (req, res) => {
   if (!version && !tag) return res.send(new restify.NotFoundError('Invalid version/tag'));
 
   if (tag) version = await tag.getVersion();
+
+  let download = (await pkg.getDownloads({ where: { month: new Date().getMonth() } }))[0];
+  if (!download) {
+    download = await pkg.createDownload();
+  }
+
+  await pkg.update({
+    downloads: pkg.get('downloads') + 1,
+    weeklyDownloads: pkg.get('weeklyDownloads') + 1,
+  });
+
+  await download.update({
+    count: download.get('count') + 1,
+  });
 
   res.writeHead(200, { 'Content-Length': Buffer.byteLength(version.dist), 'Content-Type': 'application/octet-stream' });
   res.write(version.dist);
@@ -194,6 +209,54 @@ router.del('/package/:name/tag/:tag', auth, async (req, res) => {
 
   return res.send(200, await utils.getPackageTags(pkg));
 });
+
+/* eslint-disable */
+/* For use later
+router.get('/package/:name/badge/small.svg', async (req, res) => {
+  const pkg = await Package.findById(req.params.name.toLowerCase());
+
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
+
+  const version = 'passing'; // (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion()).get('version');
+
+  const canvas = new Canvas(0, 17, 'svg');
+  const ctx = canvas.getContext('2d');
+
+  ctx.font = '9px "DejaVu Sans"';
+
+  canvas.width = ctx.measureText('build').width + ctx.measureText(version).width + 20;
+
+  ctx.fillStyle = 'rgb(85, 85, 85)';
+  ctx.fillRect(0, 0, ctx.measureText('build').width + 10, 17);
+
+  ctx.fillStyle = 'white';
+  ctx.shadowColor = 'rgba(1, 1, 1, 0.3)';
+  ctx.shadowOffsetY = 1;
+  ctx.fillText('build', 6, 11);
+
+  ctx.fillStyle = '#3273dc';
+  ctx.shadowOffsetY = 0;
+  ctx.fillRect(ctx.measureText('build').width + 10, 0, ctx.measureText(version).width + 10, 17);
+
+  ctx.fillStyle = 'white';
+  ctx.shadowOffsetY = 1;
+  ctx.fillText(version, ctx.measureText('build').width + 14, 11);
+
+  ctx.filter = 'bilinear';
+  ctx.patternQuality = 'bilinear';
+
+  const data = canvas.toBuffer();
+
+  res.writeHead(200, {
+    'Content-Length': Buffer.byteLength(data),
+    'Content-Type': 'image/svg+xml',
+  });
+
+  res.write(data);
+  return res.end();
+});
+*/
+/* eslint-enable */
 
 router.get('/package/:name/badge/full.svg', async (req, res) => {
   const pkg = await Package.findById(req.params.name.toLowerCase());

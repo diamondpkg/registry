@@ -1,5 +1,6 @@
 node_modules/
-db.sqlite
+*.sqlite
+migrations
 registry.tar.gz
 config.json
 docker-compose.yml

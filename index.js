@@ -1,10 +1,19 @@
 const fs = require('fs');
 const v1 = require('./v1');
-const { db } = require('./db');
+const { db, Package } = require('./db');
 const restify = require('restify');
+const schedule = require('node-schedule');
 const ver = require('./package.json').version;
 const Router = require('restify-router').Router;
 const corsMiddleware = require('restify-cors-middleware');
+
+schedule.scheduleJob('0 0 * * 0', async () => {
+  for (const pkg of await Package.findAll()) {
+    pkg.update({
+      weeklyDownloads: 0,
+    });
+  }
+});
 
 const router = new Router();
 const server = restify.createServer({

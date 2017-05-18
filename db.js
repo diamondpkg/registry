@@ -30,6 +30,16 @@ const Package = db.define('package', {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  downloads: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+  weeklyDownloads: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
 });
 
 const Version = db.define('version', {
@@ -106,8 +116,25 @@ const User = db.define('user', {
   },
 });
 
+const Download = db.define('download', {
+  month: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue() {
+      return new Date().getMonth();
+    },
+  },
+  count: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+});
+
+
 Package.hasMany(Version, { as: 'Versions' });
 Package.hasMany(Tag, { as: 'Tags' });
+Package.hasMany(Download, { as: 'Downloads' });
 
 Tag.belongsTo(Version);
 

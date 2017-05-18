@@ -17,6 +17,7 @@ services:
       - EMAIL_FROM=YOUR_FROM_ADDRESS
   registry_db:
     image: "postgres:9"
+    restart: always
     container_name: registry_db
     environment:
       - POSTGRES_DB=registry
