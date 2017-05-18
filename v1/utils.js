@@ -63,11 +63,11 @@ module.exports = {
   },
 
   async getMonthlyDownloads(pkg) {
-    const arr = new Array(12).fill(0);
+    const obj = {};
     for (const download of await pkg.getDownloads()) {
-      arr[download.get('month')] = download.get('count');
+      obj[new Date(download.get('date')).toISOString()] = download.get('count');
     }
-    return arr;
+    return obj;
   },
 
   async getAdvPackageInfo(req, pkg) {

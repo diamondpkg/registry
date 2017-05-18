@@ -29,7 +29,9 @@ router.get('/package/:name/:version', async (req, res) => {
 
   if (tag) version = await tag.getVersion();
 
-  let download = (await pkg.getDownloads({ where: { month: new Date().getMonth() } }))[0];
+  let download = (await pkg.getDownloads({
+    where: { date: new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth())) },
+  }))[0];
   if (!download) {
     download = await pkg.createDownload();
   }

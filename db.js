@@ -117,11 +117,11 @@ const User = db.define('user', {
 });
 
 const Download = db.define('download', {
-  month: {
-    type: Sequelize.INTEGER,
+  date: {
+    type: Sequelize.DATEONLY,
     allowNull: false,
     defaultValue() {
-      return new Date().getMonth();
+      return new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth()));
     },
   },
   count: {
