@@ -1,4 +1,3 @@
-const fs = require('fs');
 const v1 = require('./v1');
 const { db, Package } = require('./db');
 const restify = require('restify');
@@ -19,15 +18,13 @@ const router = new Router();
 const server = restify.createServer({
   name: 'diamond-registry',
   version: ver,
-  certificate: fs.readFileSync('ssl/cert.pem'),
-  key: fs.readFileSync('ssl/key.pem'),
 });
 
 server.use(restify.bodyParser({ mapFiles: true }));
 server.use(restify.queryParser());
 
 const cors = corsMiddleware({
-  origins: ['https://diamond.js.org', 'http://vue.diamond.hackzzila.com', 'http://localhost:8080'],
+  origins: ['https://diamond.js.org', 'http://diamondpkg.org', 'https://diamondpkg.org', 'http://localhost:8080'],
   credentials: true,
   allowHeaders: ['Authorization'],
 });

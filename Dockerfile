@@ -8,7 +8,6 @@ WORKDIR /usr/src/registry
 COPY ./*.js /usr/src/registry/
 COPY ./html/ /usr/src/registry/html/
 COPY ./v1/ /usr/src/registry/v1/
-COPY ./ssl/ /usr/src/registry/ssl/
 COPY package.json /usr/src/registry/
 RUN npm install
 
