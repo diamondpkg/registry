@@ -4,3 +4,5 @@ migrations
 registry.tar.gz
 config.json
 docker-compose.yml
+docs/
+docs-build/

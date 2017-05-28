@@ -1,4 +1,5 @@
 const fs = require('fs');
+const docs = require('../docs');
 const auth = require('../auth');
 const crypto = require('crypto');
 // const Canvas = require('canvas');
@@ -93,6 +94,8 @@ router.post('/package/:name', auth, async (req, res) => {
   }
 
   await latest.setVersion(version);
+
+  docs(req.params.name.toLowerCase(), req.params.dist);
 
   return res.send(200, await utils.getPackageVersionInfo(req, pkg, version));
 });
