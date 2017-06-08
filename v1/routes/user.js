@@ -127,7 +127,7 @@ router.post('/user/login', async (req, res) => {
     jwt.sign({ sub: user.get('username') }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' }, (e, token) => {
       if (e) return res.send(new restify.InternalServerError('Internal server error'));
 
-      return res.send(200, { token });
+      return res.send(200, { token, user: utils.getUserInfo(user) });
     });
 
     return undefined;
