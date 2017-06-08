@@ -29,14 +29,15 @@ module.exports = async (name, dist) => {
 
   Object.assign(config, { dest: path.join(process.cwd(), 'docs-build', id, 'doc') });
 
-  sassdoc([`${p}/**/*.{sass,scss}`, '!node_modules/**/*'], config)
-    .then(async () => {
-      await fs.ensureDir(path.join(process.cwd(), 'docs', name));
-      await fs.copy(path.join(process.cwd(), 'docs-build', id, 'doc'), path.join(process.cwd(), 'docs', name));
-      await fs.remove(path.join(process.cwd(), 'docs-build', id));
-      await fs.remove(path.join(process.cwd(), 'docs-build', `${id}.tgz`));
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  try {
+    await sassdoc([`${p}/**/*.{sass,scss}`, '!node_modules/**/*'], config);
+  } catch (err) {
+    console.error(err);
+    return;
+  }
+
+  await fs.ensureDir(path.join(process.cwd(), 'docs', name));
+  await fs.copy(path.join(process.cwd(), 'docs-build', id, 'doc'), path.join(process.cwd(), 'docs', name));
+  await fs.remove(path.join(process.cwd(), 'docs-build', id));
+  await fs.remove(path.join(process.cwd(), 'docs-build', `${id}.tgz`));
 };

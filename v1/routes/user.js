@@ -3,6 +3,7 @@ const auth = require('../auth');
 const utils = require('../utils');
 const restify = require('restify');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { User } = require('../../db');
 const superagent = require('superagent');
 const Handlebars = require('handlebars');
@@ -107,6 +108,29 @@ router.post('/user', (req, res) => {
       .field('bodyHtml', email({ url: `${req.isSecure() ? 'https' : 'http'}://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
 
     return res.send(200, utils.getUserInfo(user));
+  });
+
+  return undefined;
+});
+
+router.post('/user/login', async (req, res) => {
+  if (!req.params.username || !req.params.password) return res.send(new restify.BadRequestError('Missing username and/or password'));
+
+  const user = await User.findById(req.params.username);
+  if (!user) return res.send(new restify.UnauthorizedError('Unauthorized'));
+  if (!user.get('verified')) return res.send(new restify.UnauthorizedError('Unauthorized'));
+
+  bcrypt.compare(req.params.password, user.get('password'), (err, match) => {
+    if (err) return res.send(new restify.InternalServerError('Internal server error'));
+    if (!match) return res.send(new restify.UnauthorizedError('Unauthorized'));
+
+    jwt.sign({ sub: user.get('username') }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' }, (e, token) => {
+      if (e) return res.send(new restify.InternalServerError('Internal server error'));
+
+      return res.send(200, { token });
+    });
+
+    return undefined;
   });
 
   return undefined;

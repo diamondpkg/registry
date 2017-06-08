@@ -15,6 +15,7 @@ services:
       - PASSWORD=password
       - EMAIL_APIKEY=YOUR_ELASTICEMAIL_APIKEY
       - EMAIL_FROM=YOUR_FROM_ADDRESS
+      - JWT_SECRET=foo
   registry_db:
     image: "postgres:9"
     restart: always
