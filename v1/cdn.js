@@ -17,7 +17,7 @@ module.exports = async (name, dist, pkg, version) => {
   await tar.x({ cwd: p, file: path.join(process.cwd(), 'cdn-build', `${id}.tgz`), strict: true });
 
   let css;
-  if (!pkg.main.endsWith('.css')) css = await diamond.compile(path.join(p, pkg.main), { outputStyle: 'compressed' });
+  if (!pkg.main.endsWith('.css')) css = await diamond.compile(path.join(p, pkg.main), { minify: true });
   else css = await fs.readFile(path.join(p, pkg.main));
 
   await version.update({ cdn: css });
