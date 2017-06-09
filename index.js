@@ -20,6 +20,12 @@ const server = restify.createServer({
   version: ver,
 });
 
+const cdnRouter = new Router();
+const cdnServer = restify.createServer({
+  name: 'diamond-registry',
+  version: ver,
+});
+
 server.use(restify.bodyParser({ mapFiles: true }));
 server.use(restify.queryParser());
 
@@ -32,11 +38,17 @@ const cors = corsMiddleware({
 server.pre(cors.preflight);
 server.pre(cors.actual);
 
-router.add('/', v1);
-router.add('/v1', v1);
+router.add('/', v1.registry);
+router.add('/v1', v1.registry);
 
 router.applyRoutes(server);
 
+cdnRouter.add('/', v1.cdn);
+cdnRouter.add('/v1', v1.cdn);
+
+cdnRouter.applyRoutes(cdnServer);
+
 db.sync().then(() => {
-  server.listen(8000, () => console.log('Ready'));
+  cdnServer.listen(9000, () => console.log('CDN Ready'));
+  server.listen(8000, () => console.log('Registry Ready'));
 });

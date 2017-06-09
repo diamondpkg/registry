@@ -73,6 +73,7 @@ const Version = db.define('version', {
     type: Sequelize.BLOB,
     allowNull: false,
   },
+  cdn: Sequelize.TEXT,
 });
 
 const Tag = db.define('tag', {

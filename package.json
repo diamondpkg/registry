@@ -18,6 +18,7 @@
   "homepage": "https://github.com/diamondpkg/registry#readme",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "diamondpkg": "github:diamondpkg/diamond#generator-rewrite",
     "fs-extra": "^3.0.1",
     "handlebars": "^4.0.8",
     "js-yaml": "^3.8.4",

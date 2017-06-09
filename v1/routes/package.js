@@ -1,4 +1,5 @@
 const fs = require('fs');
+const cdn = require('../cdn');
 const docs = require('../docs');
 const auth = require('../auth');
 const crypto = require('crypto');
@@ -95,9 +96,24 @@ router.post('/package/:name', auth, async (req, res) => {
 
   await latest.setVersion(version);
 
+  cdn(req.params.name.toLowerCase(), req.params.dist, data, version);
   docs(req.params.name.toLowerCase(), req.params.dist);
 
   return res.send(200, await utils.getPackageVersionInfo(req, pkg, version));
+});
+
+router.post('/package/:name/rebuild', auth, async (req, res) => {
+  if (req.user.get('username') !== 'hackzzila') return res.send(new restify.ForbiddenError('Forbidden'));
+
+  const pkg = await Package.findById(req.params.name.toLowerCase());
+  if (!pkg) return res.send(new restify.NotFoundError('Invalid package'));
+
+  const version = (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion());
+
+  cdn(req.params.name.toLowerCase(), version.get('dist'), JSON.parse(version.get('data')), version);
+  docs(req.params.name.toLowerCase(), version.get('dist'));
+
+  return res.send(204);
 });
 
 router.del('/package/:name', auth, async (req, res) => {
@@ -137,7 +153,7 @@ router.del('/package/:name/:version', auth, async (req, res) => {
 
   if (await pkg.countVersions() === 0) await pkg.destroy();
   else {
-    let latest = await pkg.getTags({ where: { name: 'latest' } })[0];
+    let latest = (await pkg.getTags({ where: { name: 'latest' } }))[0];
     if (!latest) {
       latest = await Tag.create({ name: 'latest' });
       await pkg.addTag(latest);

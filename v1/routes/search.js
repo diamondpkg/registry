@@ -1,20 +1,10 @@
 const utils = require('../utils');
 const restify = require('restify');
-const ver = require('../../package.json').version;
 const Router = require('restify-router').Router;
 
 const { Package, User } = require('../../db');
 
 const router = new Router();
-
-router.get('/', async (req, res) => {
-  res.send(200, {
-    name: 'diamond-registry',
-    version: ver,
-    packages: await Package.count(),
-    users: await User.count(),
-  });
-});
 
 router.get('/search/user', async (req, res) => {
   if (!req.params.q) return res.send(new restify.BadRequestError('No search query'));

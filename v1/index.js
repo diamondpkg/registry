@@ -1,4 +1,5 @@
 const restify = require('restify');
+const cdn = require('./routes/cdn');
 const { Package, User } = require('../db');
 const Router = require('restify-router').Router;
 const ver = require('../package.json').version;
@@ -22,4 +23,4 @@ router.add('/', require('./routes/search'));
 router.add('/', require('./routes/user'));
 router.add('/', require('./routes/package'));
 
-module.exports = router;
+module.exports = { registry: router, cdn };
