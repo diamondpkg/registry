@@ -1,3 +1,4 @@
+diamond/
 node_modules/
 *.sqlite
 migrations

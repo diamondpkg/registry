@@ -102,6 +102,36 @@ router.post('/package/:name', auth, async (req, res) => {
   return res.send(200, await utils.getPackageVersionInfo(req, pkg, version));
 });
 
+router.get('/packages', async (req, res) => {
+  const limit = req.params.limit || 50;
+  if (limit > 100) return res.send(new restify.BadRequestError('limit must be less than 100'));
+
+  let packages = await Package.findAll();
+
+  packages.sort((a, b) => {
+    const aVal = a.get('downloads') / (moment() - moment(a.get('createdAt')));
+    const bVal = b.get('downloads') / (moment() - moment(b.get('createdAt')));
+
+    if (aVal < bVal) return 1;
+    else if (aVal > bVal) return -1;
+    return 0;
+  });
+
+  packages = packages.splice(0, limit);
+
+  const promises = [];
+  const response = [];
+  for (const pkg of packages) {
+    promises.push((async () => {
+      response.push(await utils.getPackageVersionInfo(req, pkg, (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion())));
+    })());
+  }
+
+  await Promise.all(promises);
+
+  return res.send(200, response);
+});
+
 router.post('/package/:name/rebuild', auth, async (req, res) => {
   if (req.user.get('username') !== 'hackzzila') return res.send(new restify.ForbiddenError('Forbidden'));
 
