@@ -122,9 +122,7 @@ router.get('/packages', async (req, res) => {
   const promises = [];
   const response = [];
   for (const pkg of packages) {
-    promises.push((async () => {
-      response.push(await utils.getPackageVersionInfo(req, pkg, (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion())));
-    })());
+    response.push(await utils.getPackageVersionInfo(req, pkg, (await (await pkg.getTags({ where: { name: 'latest' } }))[0].getVersion())));
   }
 
   await Promise.all(promises);
