@@ -107,7 +107,13 @@ router.post('/user', (req, res) => {
       .field('subject', 'Activate Your diamond Account')
       .field('bodyHtml', email({ url: `${req.isSecure() ? 'https' : 'http'}://${req.headers.host}/v1/verify?user=${user.get('username')}&token=${user.get('verifyToken')}` }));
 
-    return res.send(200, utils.getUserInfo(user));
+    jwt.sign({ sub: user.get('username') }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' }, (e, token) => {
+      if (e) return res.send(new restify.InternalServerError('Internal server error'));
+
+      return res.send(200, { token, user: utils.getUserInfo(user) });
+    });
+
+    return undefined;
   });
 
   return undefined;

@@ -5,6 +5,8 @@ const schedule = require('node-schedule');
 const ver = require('./package.json').version;
 const Router = require('restify-router').Router;
 const corsMiddleware = require('restify-cors-middleware');
+const { graphqlRestify, graphiqlRestify } = require('graphql-server-restify');
+const schema = require('./v2');
 
 schedule.scheduleJob('0 0 * * 0', async () => {
   for (const pkg of await Package.findAll()) {
@@ -47,6 +49,11 @@ cdnRouter.add('/', v1.cdn);
 cdnRouter.add('/v1', v1.cdn);
 
 cdnRouter.applyRoutes(cdnServer);
+
+server.post('/graphql', (req, res, next) => graphqlRestify({ schema, context: { req } })(req, res, next));
+server.get('/graphql', (req, res, next) => graphqlRestify({ schema, context: { req } })(req, res, next));
+
+server.get('/graphiql', graphiqlRestify({ endpointURL: '/graphql' }));
 
 db.sync().then(() => {
   cdnServer.listen(9000, () => console.log('CDN Ready'));

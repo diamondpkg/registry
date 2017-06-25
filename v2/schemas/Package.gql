@@ -1,0 +1,13 @@
+type Package {
+  name: String!
+  description: String!
+  createdAt: String!
+  author(username: String!): User!
+  authors: [User!]!
+  tag(name: String!): Version!
+  tags: JSON!
+  downloads: Int!
+  weeklyDownloads: Int!
+  version(version: String!): Version!
+  versions: [Version!]!
+}

@@ -20,6 +20,10 @@
     "bcryptjs": "^2.4.3",
     "diamondpkg": "github:diamondpkg/diamond#generator-rewrite",
     "fs-extra": "^3.0.1",
+    "graphql": "^0.10.3",
+    "graphql-server-restify": "^0.8.5",
+    "graphql-tools": "^1.0.0",
+    "graphql-type-json": "^0.1.4",
     "handlebars": "^4.0.8",
     "js-yaml": "^3.8.4",
     "jsonwebtoken": "^7.4.1",
@@ -43,6 +47,7 @@
     "wordwrap": "^1.0.0"
   },
   "devDependencies": {
+    "@playlyfe/gql": "^2.3.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.1.3",
     "eslint-plugin-import": "^2.2.0",

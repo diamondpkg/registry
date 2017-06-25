@@ -1,0 +1,7 @@
+type Mutation {
+  login(username: String! password: String!): Login!
+  addAuthor(package: String! username: String!): Package!
+  removeAuthor(package: String! username: String!): Package!
+  setTag(package: String! tag: String! version: String!): Package!
+  removeTag(package: String! tag: String!): Package!
+}

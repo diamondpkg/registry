@@ -1,0 +1,12 @@
+type Version {
+  version: String!
+  readme: String!
+  createdAt: String!
+  dist: Dist!
+  data: JSON!
+}
+
+type Dist {
+  shasum: String!
+  url: String!
+}
